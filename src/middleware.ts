@@ -15,14 +15,16 @@ export async function middleware(request: NextRequest) {
     })
     const data = await res.json();
     if (data?.isValid) {
+      if (request.nextUrl.pathname.startsWith('/auth/login')) {
+        return NextResponse.redirect(new URL('/devices', request.url))
+      }
       return NextResponse.next()
     }
   }
 
-  return NextResponse.redirect('/auth/login');
+  return NextResponse.rewrite(new URL('/auth/login', request.url));
 }
 
-// See "Matching Paths" below to learn more
-export const config = {
-  matcher: '/about/:path*',
-}
+// export const config = {
+//   matcher: '/',
+// }
