@@ -1,6 +1,6 @@
 'use server';
 
-import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 
 export async function userLogin(formData: FormData) {
@@ -17,8 +17,9 @@ export async function userLogin(formData: FormData) {
     body: JSON.stringify(rawBody)
   });
   const json = await res.json();
-  // console.log('json', json)
+  
   if (json) {
+    console.log('json', json)
     const token = json?.token;
     cookieStore.set('token', token, {
       maxAge: 3600 * 24,
@@ -26,7 +27,7 @@ export async function userLogin(formData: FormData) {
       sameSite: 'lax',
       secure: process.env.NODE_ENV !== "development"
     });
-    redirect(`/devices`);
+    redirect(`/`);
   }
 
 };

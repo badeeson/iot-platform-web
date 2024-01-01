@@ -3,8 +3,19 @@ import type { NextRequest } from 'next/server'
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
+  const PUBLIC_FILE = /\.(.*)$/;
+  const pathname = request.nextUrl.pathname;
   const token = request.cookies.get('token')?.value
   // console.log('token', token)
+  if (
+    pathname.startsWith("/_next") || // exclude Next.js internals
+    pathname.startsWith("/api") || //  exclude all API routes
+    pathname.startsWith("/static") || // exclude static files
+    PUBLIC_FILE.test(pathname)  // exclude all files in the public folder
+  ) {
+    return NextResponse.next();
+  }
+  
   if (token) {
     const res = await fetch('http://localhost:4000/auth/verify', {
       method: 'POST',
@@ -15,8 +26,8 @@ export async function middleware(request: NextRequest) {
     })
     const data = await res.json();
     if (data?.isValid) {
-      if (request.nextUrl.pathname.startsWith('/auth/login')) {
-        return NextResponse.redirect(new URL('/devices', request.url))
+      if (pathname.startsWith('/auth/login')) {
+        return NextResponse.redirect(new URL('/', request.url))
       }
       return NextResponse.next()
     }

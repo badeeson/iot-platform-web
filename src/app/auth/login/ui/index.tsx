@@ -33,7 +33,8 @@ function Copyright(props: any) {
 const defaultTheme = createTheme();
 
 export default function LogInPage() {
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
